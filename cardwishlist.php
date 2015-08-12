@@ -1,8 +1,6 @@
 <?php
+
 $raw_file = 'mtgwishlist.csv';
-$file = file_get_contents('mtgwishlist.csv');
-$mydata = str_getcsv($file, "\n");
-array_splice($mydata, 1);
 
 if(isset($_POST['submitted'])){
 	$new_line = "\n";
@@ -21,15 +19,23 @@ if(isset($_POST['submitted'])){
 	$new_line .= $_POST['image'];
 	$new_line .= ",";
 	$new_line .= $_POST['colors'];
-	
-	echo $new_line;
+
 	file_put_contents($raw_file, $new_line, FILE_APPEND);
 }
+
+$file = file_get_contents($raw_file);
+$card_rows = str_getcsv($file, "\n");
+array_splice($card_rows, 0, 1);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
 	<title>card wish list</title>
+	<style>
+		td {
+			border:1px solid red;
+		}
+	</style>
 </head>
 <body>
 	<h1>Card Wish List</h1>
@@ -78,6 +84,33 @@ if(isset($_POST['submitted'])){
 			</label>
 			<button type="submit">Save this Card!</button>
 		</form>
+	</div>
+	<div class="list-o-card">
+		<table>
+			<tr>
+				<td>Card Name</td>
+				<td>Create Type</td>
+				<td>Mana</td>
+				<td>Power/Toughness</td>
+				<td>Flavor text</td>
+				<td>Card Text</td>
+				<td>Image</td>
+				<td>Colors</td>
+			</tr>
+			<?php
+			// loop through all the rows
+			foreach ($card_rows as  $row) {
+				$parts = explode(',', $row);
+				echo "<tr>";
+				// loop thru each part
+				foreach ($parts as $element) {
+					echo "<td>".$element."</td>";
+				}
+				echo "</tr>";
+			}
+
+			?>
+		</table>
 	</div>
 </body>
 </html>
